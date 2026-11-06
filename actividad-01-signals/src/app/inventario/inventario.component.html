@@ -1,0 +1,63 @@
+<main class="contenedor">
+  <header>
+    <p class="etiqueta">Actividad práctica · Angular Signals</p>
+    <h1>Inventario de productos</h1>
+    <p class="subtitulo">Control de stock con signal, computed y effect.</p>
+  </header>
+
+  <section class="resumen" aria-label="Resumen del inventario">
+    <div>
+      <span>Valor total del inventario</span>
+      <strong>{{ valorTotalInventario() | currency:'ARS':'symbol':'1.2-2' }}</strong>
+    </div>
+    <div>
+      <span>Productos registrados</span>
+      <strong>{{ productos().length }}</strong>
+    </div>
+  </section>
+
+  <section class="listado">
+    <label for="busqueda">Buscar por nombre</label>
+    <input
+      id="busqueda"
+      type="search"
+      [value]="filtro()"
+      (input)="actualizarFiltro($event)"
+      placeholder="Ej.: mouse"
+    />
+
+    <div class="tabla-contenedor">
+      <table>
+        <thead>
+          <tr><th>Producto</th><th>Precio</th><th>Stock</th><th>Acción</th></tr>
+        </thead>
+        <tbody>
+          @for (producto of productosFiltrados(); track producto.id) {
+            <tr>
+              <td>{{ producto.nombre }}</td>
+              <td>{{ producto.precio | currency:'ARS':'symbol':'1.2-2' }}</td>
+              <td>
+                <span [class.agotado]="producto.stock === 0">
+                  {{ producto.stock === 0 ? 'Agotado' : producto.stock }}
+                </span>
+              </td>
+              <td>
+                <button
+                  type="button"
+                  (click)="reducirStock(producto.id)"
+                  [disabled]="producto.stock === 0"
+                  [attr.aria-label]="'Reducir stock de ' + producto.nombre"
+                >
+                  Reducir stock −1
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="4" class="sin-resultados">No hay productos que coincidan con la búsqueda.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="nota">La cantidad de productos se guarda automáticamente en el almacenamiento local del navegador.</p>
+  </section>
+</main>
